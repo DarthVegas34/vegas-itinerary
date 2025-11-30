@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Vegas Trip Itinerary</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    :root {
+      /* Dark base + soft sage/mauve accents */
+      --bg-top: #111827;       /* top of gradient */
+      --bg: #020617;           /* main background (matches the version you liked) */
+      --bg-card: #020817;      /* very dark, slightly lifted from bg */
+      --border: #1f2937;       /* subtle border */
+
+      --text-main: #E5E7EB;    /* soft off-white */
+      --text-muted: #9CA3AF;   /* grey for metadata */
+      --text-soft: #CBD5E1;    /* descriptions */
+
+      --sage: #A7C7A0;         /* light sage */
+      --sage-deep: #4F6A55;    /* deeper sage */
+      --mauve: #C4A3C4;        /* soft mauve */
+      --mauve-deep: #8B5C7E;   /* deeper mauve */
+
+      --accent-sage: #A7C7A0;
+      --accent-mauve: #C4A3C4;
+      --accent-strong: #8B5C7E;
+
+      --link: #C4A3C4;         /* mauve links */
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 16px;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+      background: radial-gradient(circle at top, var(--bg-top) 0, var(--bg) 40%, #000 100%);
+      color: var(--text-main);
+    }
+
+    .app {
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: 1.4rem;
+      margin: 4px 0;
+      text-align: center;
+      color: var(--mauve);
+      letter-spacing: 0.02em;
+    }
+
+    h2 {
+      font-size: 0.9rem;
+      font-weight: 400;
+      text-align: center;
+      margin: 2px 0 12px;
+      color: var(--text-muted);
+    }
+
+    .pill-row {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      margin-bottom: 8px;
+    }
+
+    .pill {
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      background: rgba(2, 6, 23, 0.9);
+      white-space: nowrap;
+      cursor: pointer;
+      user-select: none;
+      flex-shrink: 0;
+    }
+
+    .pill.active {
+      border-color: var(--accent-mauve);
+      color: var(--text-main);
+      background: linear-gradient(
+        135deg,
+        rgba(167, 199, 160, 0.35),
+        rgba(196, 163, 196, 0.4)
+      );
+    }
+
+    .day-label {
+      font-size: 0.92rem;
+      margin: 14px 4px 6px;
+      color: var(--mauve);
+      font-weight: 600;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border-radius: 14px;
+      padding: 10px 12px;
+      margin-bottom: 10px;
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.8);
+      border: 1px solid var(--border);
+    }
+
+    .time {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .title {
+      font-size: 0.98rem;
+      font-weight: 600;
+      margin-top: 2px;
+      margin-bottom: 2px;
+      color: var(--text-main);
+    }
+
+    .category {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--accent-sage);
+      margin-bottom: 2px;
+    }
+
+    .location {
+      font-size: 0.8rem;
+      color: #E5E7EB;
+    }
+
+    .desc {
+      font-size: 0.8rem;
+      margin-top: 6px;
+      color: var(--text-soft);
+    }
+
+    .links {
+      margin-top: 8px;
+    }
+
+    .links a {
+      font-size: 0.78rem;
+      color: var(--link);
+      text-decoration: none;
+      margin-right: 12px;
+    }
+
+    .links a:hover {
+      text-decoration: underline;
+    }
+
+    .chip {
+      display: inline-block;
+      font-size: 0.7rem;
+      padding: 2px 6px;
+      border-radius: 999px;
+      border: 1px solid rgba(167, 199, 160, 0.6); /* soft sage border */
+      color: var(--mauve);
+      margin-top: 4px;
+      background: rgba(15, 23, 42, 0.7);
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 10px;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <h1>Vegas Trip Itinerary</h1>
+    <h2>Jan 26–29, 2026 · Planet Hollywood</h2>
+
+    <div class="pill-row" id="dayFilters">
+      <div class="pill active" data-day="all">All Days</div>
+      <div class="pill" data-day="Monday">Mon 1/26</div>
+      <div class="pill" data-day="Tuesday">Tue 1/27</div>
+      <div class="pill" data-day="Wednesday">Wed 1/28</div>
+      <div class="pill" data-day="Thursday">Thu 1/29</div>
+    </div>
+
+    <div id="itinerary"></div>
+
+    <footer>
+      The Groom's Table · Vegas 2026
+    </footer>
+  </div>
+
+  <script>
+    // ====== TRIP EVENTS (EDIT THIS PART ONLY) ======
+    const events = [
+      // Monday 26
+      {
+        day: "Monday",
+        date: "2026-01-26",
+        label: "Monday · Arrival Day",
+        start: "12:00 PM",
+        end: "3:00 PM",
+        title: "Arrivals & Check-in",
+        category: "Travel / Check-in",
+        location: "Planet Hollywood (Lobby / Rooms)",
+        desc: "Guests arrive in Vegas, check in, drop bags, and do light exploring.",
+        link: "",
+        mapQuery: "Planet Hollywood Las Vegas",
+        vibe: "Chill travel"
+      },
+      {
+        day: "Monday",
+        date: "2026-01-26",
+        label: "Monday · Arrival Day",
+        start: "4:00 PM",
+        end: "5:30 PM",
+        title: "Room Downtime",
+        category: "Downtime",
+        location: "Planet Hollywood",
+        desc: "Rest, unpack, showers, and reset before the evening.",
+        link: "",
+        mapQuery: "Planet Hollywood Las Vegas",
+        vibe: "Rest / Free time"
+      },
+      {
+        day: "Monday",
+        date: "2026-01-26",
+        label: "Monday · Arrival Day",
+        start: "6:30 PM",
+        end: "8:30 PM",
+        title: "Welcome Dinner + Drinks",
+        category: "Food / Happy Hour",
+        location: "Flights (Planet Hollywood)",
+        desc: "Kickoff dinner + drinks with the group at Flights inside Planet Hollywood.",
+        link: "",
+        mapQuery: "Flights Restaurant Bar Planet Hollywood Las Vegas",
+        vibe: "Group event"
+      },
+      {
+        day: "Monday",
+        date: "2026-01-26",
+        label: "Monday · Arrival Day",
+        start: "9:00 PM",
+        end: "Late",
+        title: "Optional Night Out / Casino",
+        category: "Free Time / Nightlife",
+        location: "Planet Hollywood & The Strip",
+        desc: "Optional bar hopping, casino time, and photos on the Strip. Totally flexible.",
+        link: "",
+        mapQuery: "Las Vegas Strip",
+        vibe: "Optional"
+      },
+
+      // Tuesday 27
+      {
+        day: "Tuesday",
+        date: "2026-01-27",
+        label: "Tuesday",
+        start: "9:00 AM",
+        end: "11:00 AM",
+        title: "Brunch",
+        category: "Food",
+        location: "Hexx Kitchen + Bar (Paris, nearby)",
+        desc: "Group or optional brunch with Strip views.",
+        link: "",
+        mapQuery: "Hexx Kitchen Bar Las Vegas",
+        vibe: "Optional"
+      },
+      {
+        day: "Tuesday",
+        date: "2026-01-27",
+        label: "Tuesday",
+        start: "11:30 AM",
+        end: "3:30 PM",
+        title: "Pool / Spa / Explore Block",
+        category: "Downtime / Pool / Spa",
+        location: "Planet Hollywood / Miracle Mile / Strip",
+        desc: "Free time for pool, spa, shopping at Miracle Mile, or exploring other casinos.",
+        link: "",
+        mapQuery: "Planet Hollywood Miracle Mile Shops",
+        vibe: "Free time"
+      },
+      {
+        day: "Tuesday",
+        date: "2026-01-27",
+        label: "Tuesday",
+        start: "4:00 PM",
+        end: "6:00 PM",
+        title: "Happy Hour & Bites",
+        category: "Food / Happy Hour",
+        location: "Flights (Planet Hollywood)",
+        desc: "Drinks + shareable bites before the night.",
+        link: "",
+        mapQuery: "Flights Restaurant Bar Planet Hollywood Las Vegas",
+        vibe: "Group event"
+      },
+      {
+        day: "Tuesday",
+        date: "2026-01-27",
+        label: "Tuesday",
+        start: "7:30 PM",
+        end: "Late",
+        title: "Bachelor / Bachelorette Night",
+        category: "Optional Night Event",
+        location: "TBD (Strip area)",
+        desc: "Option to split bride/groom vibes or keep it co-ed. Could be Blondies, club, lounge, or karaoke.",
+        link: "",
+        mapQuery: "Blondies Sports Bar & Grill Las Vegas",
+        vibe: "Flexible"
+      },
+
+      // Wednesday 28
+      {
+        day: "Wednesday",
+        date: "2026-01-28",
+        label: "Wednesday · Arte Museum + Shin Lim",
+        start: "9:30 AM",
+        end: "12:00 PM",
+        title: "Morning Free Time",
+        category: "Downtime",
+        location: "Planet Hollywood / Strip",
+        desc: "Sleep in, room service, pool, or shopping. Protect this as recharge time.",
+        link: "",
+        mapQuery: "Planet Hollywood Las Vegas",
+        vibe: "Free time"
+      },
+      {
+        day: "Wednesday",
+        date: "2026-01-28",
+        label: "Wednesday · Arte Museum + Shin Lim",
+        start: "1:00 PM",
+        end: "3:00 PM",
+        title: "Arte Museum Visit",
+        category: "Activity",
+        location: "Arte Museum Las Vegas",
+        desc: "Immersive digital art experience. Great for photos and group vibes.",
+        link: "",
+        mapQuery: "Arte Museum Las Vegas",
+        vibe: "Must-do"
+      },
+      {
+        day: "Wednesday",
+        date: "2026-01-28",
+        label: "Wednesday · Arte Museum + Shin Lim",
+        start: "5:00 PM",
+        end: "6:30 PM",
+        title: "Pre-Show Dinner",
+        category: "Food / Happy Hour",
+        location: "Gordon Ramsay Burger (Planet Hollywood) or Rosa Mexicano",
+        desc: "Early dinner + drinks before the show. Choose between burgers or Mexican with margaritas.",
+        link: "",
+        mapQuery: "Gordon Ramsay Burger Planet Hollywood",
+        vibe: "Group event"
+      },
+      {
+        day: "Wednesday",
+        date: "2026-01-28",
+        label: "Wednesday · Arte Museum + Shin Lim",
+        start: "7:30 PM",
+        end: "9:00 PM",
+        title: "Shin Lim Magic Show",
+        category: "Show",
+        location: "Shin Lim Theater (Las Vegas)",
+        desc: "Main show of the trip. Everyone together.",
+        link: "",
+        mapQuery: "Shin Lim Las Vegas",
+        vibe: "Must-do"
+      },
+      {
+        day: "Wednesday",
+        date: "2026-01-28",
+        label: "Wednesday · Arte Museum + Shin Lim",
+        start: "9:30 PM",
+        end: "Late",
+        title: "Post-Show Free Time",
+        category: "Free Time / Nightlife",
+        location: "Strip / Planet Hollywood",
+        desc: "Drinks, light gambling, or back to rooms to chill.",
+        link: "",
+        mapQuery: "Planet Hollywood Las Vegas",
+        vibe: "Free time"
+      },
+
+      // Thursday 29
+      {
+        day: "Thursday",
+        date: "2026-01-29",
+        label: "Thursday · Departure Day",
+        start: "9:00 AM",
+        end: "11:00 AM",
+        title: "Checkout Breakfast",
+        category: "Food",
+        location: "Ocean One Bar & Grille (Miracle Mile)",
+        desc: "Casual breakfast or brunch for anyone with later flights.",
+        link: "",
+        mapQuery: "Ocean One Bar & Grille Las Vegas",
+        vibe: "Optional"
+      },
+      {
+        day: "Thursday",
+        date: "2026-01-29",
+        label: "Thursday · Departure Day",
+        start: "11:00 AM",
+        end: "2:00 PM",
+        title: "Check-out & Departures",
+        category: "Travel / Check-out",
+        location: "Planet Hollywood / Airport",
+        desc: "Check out, airport runs, final photos, hugs, and goodbyes.",
+        link: "",
+        mapQuery: "Harry Reid International Airport Las Vegas",
+        vibe: "Travel"
+      }
+    ];
+
+    // ====== APP LOGIC (NO NEED TO TOUCH UNLESS YOU WANT TO) ======
+    function groupEvents(filterDay = "all") {
+      const groups = {};
+      for (const ev of events) {
+        if (filterDay !== "all" && ev.day !== filterDay) continue;
+        if (!groups[ev.date]) {
+          groups[ev.date] = { label: ev.label, items: [] };
+        }
+        groups[ev.date].items.push(ev);
+      }
+      return groups;
+    }
+
+    function renderItinerary(filterDay = "all") {
+      const container = document.getElementById("itinerary");
+      container.innerHTML = "";
+      const grouped = groupEvents(filterDay);
+
+      const dates = Object.keys(grouped).sort();
+      for (const date of dates) {
+        const section = document.createElement("div");
+        const lbl = document.createElement("div");
+        lbl.className = "day-label";
+        lbl.textContent = grouped[date].label;
+        section.appendChild(lbl);
+
+        for (const item of grouped[date].items) {
+          const card = document.createElement("div");
+          card.className = "card";
+
+          const t = document.createElement("div");
+          t.className = "time";
+          t.textContent = `${date} · ${item.start} – ${item.end}`;
+          card.appendChild(t);
+
+          const title = document.createElement("div");
+          title.className = "title";
+          title.textContent = item.title;
+          card.appendChild(title);
+
+          const cat = document.createElement("div");
+          cat.className = "category";
+          cat.textContent = item.category;
+          card.appendChild(cat);
+
+          if (item.location) {
+            const loc = document.createElement("div");
+            loc.className = "location";
+            loc.textContent = "@ " + item.location;
+            card.appendChild(loc);
+          }
+
+          if (item.vibe) {
+            const chip = document.createElement("div");
+            chip.className = "chip";
+            chip.textContent = item.vibe;
+            card.appendChild(chip);
+          }
+
+          if (item.desc) {
+            const d = document.createElement("div");
+            d.className = "desc";
+            d.textContent = item.desc;
+            card.appendChild(d);
+          }
+
+          const links = document.createElement("div");
+          links.className = "links";
+
+          if (item.link) {
+            const a = document.createElement("a");
+            a.href = item.link;
+            a.textContent = "Reservation / Details";
+            a.target = "_blank";
+            links.appendChild(a);
+          }
+
+          if (item.mapQuery) {
+            const m = document.createElement("a");
+            m.href =
+              "https://www.google.com/maps/search/?api=1&query=" +
+              encodeURIComponent(item.mapQuery);
+            m.textContent = "Open in Maps";
+            m.target = "_blank";
+            links.appendChild(m);
+          }
+
+          card.appendChild(links);
+          section.appendChild(card);
+        }
+
+        container.appendChild(section);
+      }
+    }
+
+    // Filter buttons
+    document.getElementById("dayFilters").addEventListener("click", (e) => {
+      const pill = e.target.closest(".pill");
+      if (!pill) return;
+      document
+        .querySelectorAll(".pill")
+        .forEach((p) => p.classList.remove("active"));
+      pill.classList.add("active");
+
+      const day = pill.dataset.day;
+      renderItinerary(day === "all" ? "all" : day);
+    });
+
+    // Initial render
+    renderItinerary("all");
+  </script>
+</body>
+</html>
