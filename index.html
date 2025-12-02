@@ -246,7 +246,7 @@
         location: "Flights (Planet Hollywood)",
         desc: "Kickoff dinner + drinks with the group at Flights inside Planet Hollywood.",
         link: "",
-        mapQuery: "Flights Restaurant Bar Planet Hollywood Las Vegas",
+        mapQuery: "Planet Hollywood Resort & Casino, 3667 S Las Vegas Blvd, Las Vegas, NV 89109",
         vibe: "Group event"
       },
       {
@@ -304,7 +304,8 @@
         location: "Flights (Planet Hollywood)",
         desc: "Drinks + shareable bites before the night.",
         link: "",
-        mapQuery: "Flights Restaurant Bar Planet Hollywood Las Vegas",
+        mapQuery: "Planet Hollywood Resort & Casino, 3667 S Las Vegas Blvd, Las Vegas, NV 89109",
+        menuUrl:"https://flightsrestaurants.com/menu/",
         vibe: "Group event"
       },
       {
@@ -493,7 +494,17 @@
 
           const links = document.createElement("div");
           links.className = "links";
+        
+        //Menu link (if provided)
+        if (item.menuUrl) {
+            const menuLink = document.createElement("a");
+            menuLink.href = item.menuUrl;
+            menuLink.textContent = "Menu";
+            menuLink.target = "_blank";
+            links.appendChild(menuLink);
+          }
 
+          //Generic reservation / details link (if provided)
           if (item.link) {
             const a = document.createElement("a");
             a.href = item.link;
@@ -502,11 +513,21 @@
             links.appendChild(a);
           }
 
+          //Map link (if provided - built from mapQuery) 
           if (item.mapQuery) {
             const m = document.createElement("a");
-            m.href =
-              "https://www.google.com/maps/search/?api=1&query=" +
-              encodeURIComponent(item.mapQuery);
+
+            const ua = navigator.userAgent || "";
+            const vendor = navigator.vendor || "";
+
+            const isApple =
+              /iPhone|iPad|Macintosh/.test(ua) &&
+              /Apple/.test(vendor);
+            
+            const baseUrl = isApple
+              ? "http://maps.apple.com/?q="
+              : "https://www.google.com/maps/search/?api=1&query=";
+            m.href = baseUrl + encodeURIComponent(item.mapQuery);
             m.textContent = "Open in Maps";
             m.target = "_blank";
             links.appendChild(m);
