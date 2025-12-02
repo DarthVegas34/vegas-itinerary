@@ -527,6 +527,7 @@
             const baseUrl = isApple
               ? "http://maps.apple.com/?q="
               : "https://www.google.com/maps/search/?api=1&query=";
+              
             m.href = baseUrl + encodeURIComponent(item.mapQuery);
             m.textContent = "Open in Maps";
             m.target = "_blank";
