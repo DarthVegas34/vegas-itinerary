@@ -173,6 +173,11 @@
       margin-top: 4px;
       background: rgba(15, 23, 42, 0.7);
     }
+    .party-chip {
+      border-color: rgba(196, 163, 196, 0.8); /* soft mauve border */
+      color: var(--mauve);
+      margin-left:4px;
+    }
 
     footer {
       text-align: center;
@@ -189,13 +194,11 @@
     <p class="tagline">Combined Bachelor &amp; Bachelorette Weekend</p>
 
     <div class="pill-row" id="dayFilters">
-      <div class="pill active" data-day="all">All Days</div>
+      <!-- <div class="pill active" data-day="all">All Days</div> -->
       <div class="pill" data-day="Monday">Mon 1/26</div>
       <div class="pill" data-day="Tuesday">Tue 1/27</div>
       <div class="pill" data-day="Wednesday">Wed 1/28</div>
       <div class="pill" data-day="Thursday">Thu 1/29</div>
-      <div class="pill" data-day="guys">Groom</div>
-      <div class="pill" data-day="girls">Bride</div>
     </div>
 
     <div id="itinerary"></div>
@@ -221,6 +224,8 @@
         desc: "Guests arrive in Vegas, check in, drop bags, and do light exploring.",
         link: "",
         mapQuery: "Planet Hollywood Resort & Casino, 3667 S Las Vegas Blvd, Las Vegas, NV 89109",
+        menuUrl: "https://flightsrestaurants.com/menu/",
+        party:"Both",
         vibe: "Chill travel"
       },
       {
@@ -235,6 +240,8 @@
         desc: "Rest, unpack, showers, and reset before the evening.",
         link: "",
         mapQuery: "Planet Hollywood Resort & Casino, 3667 S Las Vegas Blvd, Las Vegas, NV 89109",
+        menuUrl: "https://flightsrestaurants.com/menu/",
+        party:"Both",
         vibe: "Rest / Free time"
       },
       {
@@ -250,6 +257,7 @@
         link: "",
         mapQuery: "Planet Hollywood Resort & Casino, 3667 S Las Vegas Blvd, Las Vegas, NV 89109",
         menuUrl:"https://flightsrestaurants.com/menu/",
+        party:"Both",
         vibe: "Group event"
       },
       {
@@ -264,6 +272,8 @@
         desc: "Optional bar hopping, casino time, and photos on the Strip. Totally flexible.",
         link: "",
         mapQuery: "Las Vegas Strip",
+        menuUrl:"https://flightsrestaurants.com/menu/",
+        party:"Both",
         vibe: "Optional"
       },
 
@@ -280,6 +290,8 @@
         desc: "Group or optional brunch with Strip views.",
         link: "",
         mapQuery: "Hexx Kitchen Bar Las Vegas",
+        menuUrl:"https://flightsrestaurants.com/menu/",
+        party:"Both",
         vibe: "Optional"
       },
       {
@@ -294,6 +306,8 @@
         desc: "Free time for pool, spa, shopping at Miracle Mile, or exploring other casinos.",
         link: "",
         mapQuery: "Planet Hollywood Miracle Mile Shops",
+        menuUrl:"https://flightsrestaurants.com/menu/",
+        party:"Both",
         vibe: "Free time"
       },
       {
@@ -309,6 +323,8 @@
         link: "",
         mapQuery: "Planet Hollywood Resort & Casino, 3667 S Las Vegas Blvd, Las Vegas, NV 89109",
         menuUrl:"https://flightsrestaurants.com/menu/",
+        menuUrl:"https://flightsrestaurants.com/menu/",
+        party:"Both",
         vibe: "Group event"
       },
       {
@@ -486,6 +502,23 @@
             chip.className = "chip";
             chip.textContent = item.vibe;
             card.appendChild(chip);
+          }
+
+          //Party chp (Groom / Bride / Both)
+          if (item.party) {
+            const partyChip = document.createElement("div");
+            partyChip.className = "chip party-chip";
+           
+            if (item.party === "Both"){
+              partyChip.textContent = "🃏 Groom & Bride";
+            } else if (item.party === "Groom"){
+              partyChip.textContent = "🤵🏾‍♂️ Groom's Party";
+            } else if (item.party === "Bride"){
+              partyChip.textContent = "👰🏽‍♀️ Bride's Party";
+            }else{
+              partyChip.textContent = item.party;
+            }
+            card.appendChild(partyChip);
           }
 
           if (item.desc) {
