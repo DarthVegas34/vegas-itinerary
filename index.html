@@ -146,6 +146,7 @@
       font-size: 0.8rem;
       margin-top: 6px;
       color: var(--text-soft);
+      white-space: pre-line;  /* 👈 honors \n as real line breaks */
     }
 
     .links {
@@ -216,7 +217,7 @@
         day: "Monday",
         date: "2026-01-26",
         label: "Monday · Arrival Day",
-        start: "12:00 PM",
+        start: "8:00 AM",
         end: "3:00 PM",
         title: "Arrivals & Check-in",
         category: "Travel / Check-in",
@@ -224,7 +225,7 @@
         desc: "Guests arrive in Vegas, check in, drop bags, and do light exploring.",
         link: "",
         mapQuery: "Planet Hollywood Resort & Casino, 3667 S Las Vegas Blvd, Las Vegas, NV 89109",
-        menuUrl: "https://flightsrestaurants.com/menu/",
+        // menuUrl: "https://flightsrestaurants.com/menu/",
         party:"Both",
         vibe: "Chill travel"
       },
@@ -233,14 +234,14 @@
         date: "2026-01-26",
         label: "Monday · Arrival Day",
         start: "4:00 PM",
-        end: "5:30 PM",
-        title: "Room Downtime",
+        end: "12:00 AM",
+        title: "Official Room Time Check-In",
         category: "Downtime",
         location: "Planet Hollywood",
         desc: "Rest, unpack, showers, and reset before the evening.",
         link: "",
         mapQuery: "Planet Hollywood Resort & Casino, 3667 S Las Vegas Blvd, Las Vegas, NV 89109",
-        menuUrl: "https://flightsrestaurants.com/menu/",
+        // menuUrl: "https://flightsrestaurants.com/menu/",
         party:"Both",
         vibe: "Rest / Free time"
       },
@@ -250,10 +251,13 @@
         label: "Monday · Arrival Day",
         start: "6:30 PM",
         end: "8:30 PM",
-        title: "Welcome Dinner + Drinks",
+        title: "Dinner + Drinks",
         category: "Food / Happy Hour",
         location: "Flights (Planet Hollywood)",
-        desc: "Kickoff dinner + drinks with the group at Flights inside Planet Hollywood.",
+        desc: "Kickoff dinner + drinks with the group at Flights inside Planet Hollywood.\n\n"+
+        "Frozen Margs: $15 5:00-6:00 PM.\n"+
+        "Mule flight: $15 6:00-7:00 PM.\n" +
+        "Mojito flight: $15 7:00-8:00 PM.\n",
         link: "",
         mapQuery: "Planet Hollywood Resort & Casino, 3667 S Las Vegas Blvd, Las Vegas, NV 89109",
         menuUrl:"https://flightsrestaurants.com/menu/",
@@ -265,14 +269,14 @@
         date: "2026-01-26",
         label: "Monday · Arrival Day",
         start: "9:00 PM",
-        end: "Late",
+        end: "See you tomorrow!",
         title: "Optional Night Out / Casino",
         category: "Free Time / Nightlife",
         location: "Planet Hollywood & The Strip",
         desc: "Optional bar hopping, casino time, and photos on the Strip. Totally flexible.",
         link: "",
         mapQuery: "Las Vegas Strip",
-        menuUrl:"https://flightsrestaurants.com/menu/",
+        // menuUrl:"https://flightsrestaurants.com/menu/",
         party:"Both",
         vibe: "Optional"
       },
