@@ -654,11 +654,11 @@
       pill.classList.add("active");
 
       const day = pill.dataset.day;
-      renderItinerary(day === "all" ? "all" : day);
+      renderItinerary(day);
     });
 
     // Initial render
-    renderItinerary("all");
+    renderItinerary("Monday");
   </script>
 </body>
 </html>
