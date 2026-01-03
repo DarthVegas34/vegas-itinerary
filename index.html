@@ -635,6 +635,16 @@
           const links = document.createElement("div");
           links.className = "links";
         
+        //website link (if provided)
+        if (item.websiteUrl) {
+            const w = document.createElement("a");
+            w.href = item.websiteUrl;
+            w.textContent = "Website";
+            w.target = "_blank";
+            w.rel = "noopener noreferrer";
+            links.appendChild(w);
+          }
+        
         //Menu link (if provided)
         if (item.menuUrl) {
             const menuLink = document.createElement("a");
