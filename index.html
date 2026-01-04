@@ -267,7 +267,7 @@
       <div class="pill" data-day="Tuesday">Tue 1/27</div>
       <div class="pill" data-day="Wednesday">Wed 1/28</div>
       <div class="pill" data-day="Thursday">Thu 1/29</div>
-      <div class="pill" data-view="Food & Drinks">Food & Drinks</div>
+      <div class="pill" data-view="Explore">Explore</div>
     </div>
 
     <div id="itinerary"></div>
@@ -567,6 +567,62 @@
       }
     ];
 
+    // ====== EXPLORE LIST (BARS / QUICK EATS / ACTIVITIES) ======
+const Explore = [
+  // Bars
+  {
+    section: "Bars",
+    title: "The Chandelier Bar",
+    category: "Bar",
+    location: "The Cosmopolitan",
+    desc: "Iconic Vegas bar with a great vibe.",
+    mapQuery: "The Chandelier Bar Cosmopolitan Las Vegas",
+    websiteUrl: "https://www.cosmopolitanlasvegas.com",
+    vibe: "Cocktails"
+  },
+  {
+    section: "Bars",
+    title: "Beer Park",
+    category: "Bar",
+    location: "Paris (across the street)",
+    desc: "Rooftop hangout — good for groups.",
+    mapQuery: "Beer Park Las Vegas",
+    vibe: "Rooftop"
+  },
+
+  // Places to Eat
+  {
+    section: "Places to Eat",
+    title: "In-N-Out Burger (LINQ Promenade)",
+    category: "Quick Food",
+    location: "The LINQ Promenade",
+    desc: "Fast, cheap, clutch while walking.",
+    mapQuery: "In-N-Out Burger LINQ Las Vegas",
+    vibe: "Quick + Easy"
+  },
+  {
+    section: "Places to Eat",
+    title: "Earl of Sandwich",
+    category: "Quick Food",
+    location: "Planet Hollywood area",
+    desc: "Late-night friendly.",
+    mapQuery: "Earl of Sandwich Las Vegas",
+    vibe: "Late Night"
+  },
+
+  // Activities
+  {
+    section: "Activities",
+    title: "Bellagio Fountains",
+    category: "Walk-up Activity",
+    location: "Bellagio",
+    desc: "Easy quick stop while walking the Strip.",
+    mapQuery: "Bellagio Fountains",
+    vibe: "Classic Vegas"
+  }
+];
+
+
     // ====== APP LOGIC (NO NEED TO TOUCH UNLESS YOU WANT TO) ======
     function groupEvents(filterDay = "all") {
       const groups = {};
@@ -710,18 +766,136 @@
       }
     }
 
-    // Filter buttons
-    document.getElementById("dayFilters").addEventListener("click", (e) => {
-      const pill = e.target.closest(".pill");
-      if (!pill) return;
-      document
-        .querySelectorAll(".pill")
-        .forEach((p) => p.classList.remove("active"));
-      pill.classList.add("active");
+    function renderExplore() {
+    const container = document.getElementById("itinerary");
+    container.innerHTML = "";
 
-      const day = pill.dataset.day;
-      renderItinerary(day);
-    });
+    const sections = ["Bars", "Places to Eat", "Activities"];
+
+    for (const sectionName of sections) {
+    const items = explore.filter(x => x.section === sectionName);
+    if (!items.length) continue;
+
+    const section = document.createElement("div");
+
+    const lbl = document.createElement("div");
+    lbl.className = "day-label";
+    lbl.textContent = sectionName;
+    section.appendChild(lbl);
+
+    for (const item of items) {
+      const card = document.createElement("div");
+      card.className = "card";
+
+      // small top line (no date/time)
+      const t = document.createElement("div");
+      t.className = "time";
+      t.textContent = "Quick Picks";
+      card.appendChild(t);
+
+      const title = document.createElement("div");
+      title.className = "title";
+      title.textContent = item.title;
+      card.appendChild(title);
+
+      const cat = document.createElement("div");
+      cat.className = "category";
+      cat.textContent = item.category || sectionName;
+      card.appendChild(cat);
+
+      if (item.location) {
+        const loc = document.createElement("div");
+        loc.className = "location";
+        loc.textContent = "@ " + item.location;
+        card.appendChild(loc);
+      }
+
+      if (item.vibe) {
+        const chip = document.createElement("div");
+        chip.className = "chip";
+        chip.textContent = item.vibe;
+        card.appendChild(chip);
+      }
+
+      if (item.desc) {
+        const d = document.createElement("div");
+        d.className = "desc";
+        d.textContent = item.desc;
+        card.appendChild(d);
+      }
+
+      const links = document.createElement("div");
+      links.className = "links";
+
+      // Website link
+      if (item.websiteUrl) {
+        const w = document.createElement("a");
+        w.href = item.websiteUrl;
+        w.textContent = "Website";
+        w.target = "_blank";
+        w.rel = "noopener noreferrer";
+        links.appendChild(w);
+      }
+
+      // Menu link (optional)
+      if (item.menuUrl) {
+        const menuLink = document.createElement("a");
+        menuLink.href = item.menuUrl;
+        menuLink.textContent = "Menu";
+        menuLink.target = "_blank";
+        menuLink.rel = "noopener noreferrer";
+        links.appendChild(menuLink);
+      }
+
+      // Maps link
+      if (item.mapQuery) {
+        const m = document.createElement("a");
+
+        const ua = navigator.userAgent || "";
+        const vendor = navigator.vendor || "";
+
+        const isApple =
+          /iPhone|iPad|Macintosh/.test(ua) &&
+          /Apple/.test(vendor);
+
+        const baseUrl = isApple
+          ? "http://maps.apple.com/?q="
+          : "https://www.google.com/maps/search/?api=1&query=";
+
+        m.href = baseUrl + encodeURIComponent(item.mapQuery);
+        m.textContent = "Open in Maps";
+        m.target = "_blank";
+        links.appendChild(m);
+      }
+
+      card.appendChild(links);
+      section.appendChild(card);
+    }
+
+    container.appendChild(section);
+  }
+}
+
+
+  // Filter buttons
+  document.getElementById("dayFilters").addEventListener("click", (e) => {
+  const pill = e.target.closest(".pill");
+  if (!pill) return;
+
+  document.querySelectorAll(".pill").forEach((p) => p.classList.remove("active"));
+  pill.classList.add("active");
+
+  const day = pill.dataset.day;
+  const view = pill.dataset.view;
+
+  if (view === "explore") {
+    renderExplore();
+  } else {
+    renderItinerary(day);
+  }
+});
+
+
 
     // Initial render
     renderItinerary("Monday");
